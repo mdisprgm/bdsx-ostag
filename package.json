@@ -1,6 +1,6 @@
 {
     "name": "@bdsx/ostag",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "description": "show Device OS under the player name",
     "main": "index.js",
     "scripts": {
@@ -14,6 +14,9 @@
     ],
     "author": "mdisprgm",
     "license": "ISC",
+    "devDependencies": {
+        "bdsx": "file:../bdsx"
+    },
     "repository": {
         "type": "git",
         "url": "git+https://github.com/mdisprgm/bdsx-ostag.git"
