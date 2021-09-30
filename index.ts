@@ -17,9 +17,7 @@ events.serverOpen.on(() => {
 
     makeFolder("../ostag");
 
-    console.log(fs.existsSync("../ostag"));
     const files = fs.readdirSync("../ostag");
-    console.log(files);
     if (!files.includes("setting.json")) {
         fs.closeSync(fs.openSync(dbPath, "w"));
         fs.writeFileSync(dbPath, JSON.stringify({ enabled: true }));
