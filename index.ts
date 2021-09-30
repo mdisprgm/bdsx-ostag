@@ -13,16 +13,16 @@ const makeFolder = (dir: string) => {
 };
 
 events.serverOpen.on(() => {
-    const dbPath = "../ostag/setting.json";
+    const dbPath = "../plugins/ostag/setting.json";
 
-    makeFolder("../ostag");
+    makeFolder("../plugins/ostag");
 
-    const files = fs.readdirSync("../ostag");
+    const files = fs.readdirSync("../plugins/ostag");
     if (!files.includes("setting.json")) {
         fs.closeSync(fs.openSync(dbPath, "w"));
         fs.writeFileSync(dbPath, JSON.stringify({ enabled: true }));
     }
-    const value = fs.readFileSync("../ostag/setting.json").toString();
+    const value = fs.readFileSync(dbPath).toString();
     const p = JSON.parse(value);
     if (p["enabled"]) {
         import("./scoretag");
