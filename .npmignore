@@ -11,3 +11,5 @@ config.gypi
 CVS
 npm-debug.log
 *.ts
+!*.d.ts
+/.git

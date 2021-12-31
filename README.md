@@ -11,4 +11,4 @@
 
 # Changelogs
 
-* fix bugs
+* Update .gitignore & .npmignore
