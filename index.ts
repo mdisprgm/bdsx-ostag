@@ -1,30 +1,52 @@
 import { events } from "bdsx/event";
+import { fsutil } from "bdsx/fsutil";
 import { red, white } from "colors";
+import * as fs from "fs";
+import * as path from "path";
 
-import fs = require("fs");
-
-const makeFolder = (dir: string) => {
-    if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir);
-        console.log("[OSTAG] directory", dir, "is generated");
-    } else {
-        console.log("[OSTAG] directory", dir, "exists already");
-    }
+const defaultConfig = {
+    enabled: true,
+    UNKNOWN: "UNKNOWN",
+    ANDROID: "ANDROID",
+    IOS: "IOS",
+    OSX: "OSX",
+    AMAZON: "AMAZON",
+    GEAR_VR: "GEAR_VR",
+    HOLOLENS: "HOLOLENS",
+    WINDOWS_10: "WINDOWS_10",
+    WIN32: "WIN32",
+    DEDICATED: "DEDICATED",
+    TVOS: "TVOS",
+    PLAYSTATION: "PLAYSTATION",
+    NINTENDO: "NINTENDO",
+    XBOX: "XBOX",
+    WINDOWS_PHONE: "WINDOWS_PHONE",
 };
 
+function mkdirRecursive(dirpath: string, dirhas?: Set<string>): void {
+    if (dirhas != null && dirhas.has(dirpath)) return;
+    mkdirRecursive(path.dirname(dirpath), dirhas);
+    try {
+        fs.mkdirSync(dirpath);
+    } catch {}
+}
+const dbPath = path.join(fsutil.projectPath, "ostag");
+const filePath = path.join(dbPath, "setting.json");
+mkdirRecursive(dbPath, new Set([fsutil.projectPath]));
+
+let config: typeof defaultConfig = defaultConfig;
+export function getConfig(): typeof config {
+    return config;
+}
+try {
+    const file = fs.readFileSync(filePath, "utf8");
+    config = JSON.parse(file);
+} catch {
+    fs.writeFileSync(filePath, JSON.stringify(defaultConfig, null, 4));
+}
+
 events.serverOpen.on(() => {
-    const dbPath = "../plugins/ostag/setting.json";
-
-    makeFolder("../plugins/ostag");
-
-    const files = fs.readdirSync("../plugins/ostag");
-    if (!files.includes("setting.json")) {
-        fs.closeSync(fs.openSync(dbPath, "w"));
-        fs.writeFileSync(dbPath, JSON.stringify({ enabled: true }));
-    }
-    const value = fs.readFileSync(dbPath).toString();
-    const p = JSON.parse(value);
-    if (p["enabled"]) {
+    if (config.enabled !== false) {
         import("./scoretag");
         console.log(white("[OSTAG] loaded successfullly"));
     } else console.log(white("[OSTAG]"), red("not enabled"));

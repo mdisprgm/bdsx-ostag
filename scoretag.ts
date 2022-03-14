@@ -1,7 +1,8 @@
-import { events } from "bdsx/event";
-import { MinecraftPacketIds } from "bdsx/bds/packetids";
 import { NetworkIdentifier } from "bdsx/bds/networkidentifier";
+import { MinecraftPacketIds } from "bdsx/bds/packetids";
 import { BuildPlatform } from "bdsx/common";
+import { events } from "bdsx/event";
+import { getConfig } from ".";
 
 const OSs = new Map<NetworkIdentifier, BuildPlatform>();
 
@@ -15,9 +16,10 @@ events.networkDisconnected.on((ni) => {
     OSs.delete(ni);
 });
 
-events.playerJoin.on(async (ev) => {
-    const player = ev.player!;
+const config = getConfig();
 
-    const os = BuildPlatform[OSs.get(player.getNetworkIdentifier())!];
+events.playerJoin.on((ev) => {
+    const player = ev.player;
+    const os = (config as any)[BuildPlatform[OSs.get(player.getNetworkIdentifier())!] as any] ?? config.UNKNOWN;
     ev.player.setScoreTag(os);
 });
