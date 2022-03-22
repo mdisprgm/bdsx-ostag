@@ -12,3 +12,4 @@ CVS
 npm-debug.log
 *.ts
 !*.d.ts
+tsconfig.json
