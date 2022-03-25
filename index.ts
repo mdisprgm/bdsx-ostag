@@ -6,8 +6,8 @@ import * as path from "path";
 
 const defaultConfig = {
     tags: {
-        position: "JukeboxPopup",
-        permission: "OPERATOR", // unavailable with position: ScoreTag
+        position: "Tip",
+        permission: "MEMBER", // unavailable with position: ScoreTag
         enabled: true,
     },
     UNKNOWN: "UNKNOWN",
