@@ -4,8 +4,14 @@
 -   if true, after players joined, players' device os will be shown under their nametag
 -   you can set custom tags for each OSs. `\ue103` is special emoji for MCBE
 
-```json
+```jsonc
 {
+    "tags": {
+        "position": "JukeboxPopup",
+        "permission": "OPERATOR", // unavailable with "position": "ScoreTag"
+        "enabled": true
+    },
+    // deprecated
     "enabled": true,
     "UNKNOWN": "UNKNOWN",
     "ANDROID": "ANDROID",

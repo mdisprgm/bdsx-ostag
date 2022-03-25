@@ -5,7 +5,11 @@ import * as fs from "fs";
 import * as path from "path";
 
 const defaultConfig = {
-    enabled: true,
+    tags: {
+        position: "JukeboxPopup",
+        permission: "OPERATOR", // unavailable with position: ScoreTag
+        enabled: true,
+    },
     UNKNOWN: "UNKNOWN",
     ANDROID: "ANDROID",
     IOS: "IOS",
@@ -46,7 +50,10 @@ try {
 }
 
 events.serverOpen.on(() => {
-    if (config.enabled !== false) {
+    if ((config as any).enabled != null) {
+        console.log(new Error("Global " + "enabled".blue + " in setting is unused now. Please set " + "enabled".blue + " in " + "tags".blue + " scope"));
+    }
+    if (config?.tags?.enabled !== false) {
         import("./src/scoretag");
         console.log(white("[OSTAG] loaded successfullly"));
     } else console.log(white("[OSTAG]"), red("not enabled"));
