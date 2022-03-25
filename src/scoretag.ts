@@ -19,58 +19,66 @@ events.networkDisconnected.on((ni) => {
     OSs.delete(ni);
 });
 
-const config = getConfig();
-function getOSName(player: Player) {
-    const ni = player.getNetworkIdentifier();
-    return (config as any)[BuildPlatform[OSs.get(ni)!]] ?? config.UNKNOWN ?? "";
-}
-
-const cfgPerm = PlayerPermission[config.tags.permission as any] as unknown as number;
-const leastPerm = [PlayerPermission.CUSTOM, undefined, null].includes(cfgPerm) ? PlayerPermission.VISITOR : cfgPerm;
-
-let taggingFunc: (message: string, params?: string[]) => void = (msg: string) => {};
-events.playerJoin.on((ev) => {
-    const os = getOSName(ev.player);
-    if (config.tags.position !== "ScoreTag") registerInteractEv();
-    else ev.player.setScoreTag(os);
-});
-
-let evRegistered = false;
 const mc_level = serverInstance.minecraft.getLevel();
-function registerInteractEv() {
-    if (evRegistered) return;
-    try {
-        switch (config.tags.position) {
-            case "Raw":
-                taggingFunc = ServerPlayer.prototype.sendMessage;
-                break;
-            case "Popup":
-                taggingFunc = ServerPlayer.prototype.sendPopup;
-                break;
-            case "JukeboxPopup":
-                taggingFunc = ServerPlayer.prototype.sendJukeboxPopup;
-                break;
-            case "Tip":
-                taggingFunc = ServerPlayer.prototype.sendTip;
-                break;
-            case "ActionBar":
-                taggingFunc = ServerPlayer.prototype.sendActionbar;
-                break;
-            default:
-                break;
-        }
 
-        events.packetBefore(MinecraftPacketIds.Interact).on((pkt, ni) => {
-            const interactor = ni.getActor();
-            const isMouseover = pkt.action === InteractPacket.Actions.Mouseover;
-            if (isMouseover) {
-                const entity = mc_level.getRuntimeEntity(pkt.actorId, false);
-                if (entity?.isPlayer() && interactor) {
-                    if (interactor.getPermissionLevel() >= leastPerm) taggingFunc.call(interactor, "§f" + getOSName(entity));
-                }
-            }
+class OSTag {
+    constructor() {
+        this.event();
+    }
+    private getOSName(player: Player) {
+        const ni = player.getNetworkIdentifier();
+        return (this.config as any)[BuildPlatform[OSs.get(ni)!]] ?? this.config.UNKNOWN ?? "";
+    }
+    private taggingFunc: (message: string, params?: string[]) => void = (msg: string) => {};
+
+    private readonly config = getConfig();
+    private readonly cfgPerm = PlayerPermission[this.config.tags.permission as any] as unknown as number;
+    private readonly leastPerm = [PlayerPermission.CUSTOM, undefined, null].includes(this.cfgPerm) ? PlayerPermission.VISITOR : this.cfgPerm;
+
+    private event(): void {
+        events.playerJoin.on((ev) => {
+            const os = this.getOSName(ev.player);
+            if (this.config.tags.position !== "ScoreTag") this.registerInteractEv();
+            else ev.player.setScoreTag(os);
         });
-    } catch {
-        evRegistered = true;
+    }
+    private evRegistered = false;
+    private registerInteractEv() {
+        if (this.evRegistered) return;
+        try {
+            switch (this.config.tags.position) {
+                case "Raw":
+                    this.taggingFunc = ServerPlayer.prototype.sendMessage;
+                    break;
+                case "Popup":
+                    this.taggingFunc = ServerPlayer.prototype.sendPopup;
+                    break;
+                case "JukeboxPopup":
+                    this.taggingFunc = ServerPlayer.prototype.sendJukeboxPopup;
+                    break;
+                case "Tip":
+                    this.taggingFunc = ServerPlayer.prototype.sendTip;
+                    break;
+                case "ActionBar":
+                    this.taggingFunc = ServerPlayer.prototype.sendActionbar;
+                    break;
+                default:
+                    break;
+            }
+
+            events.packetBefore(MinecraftPacketIds.Interact).on((pkt, ni) => {
+                const interactor = ni.getActor();
+                const isMouseover = pkt.action === InteractPacket.Actions.Mouseover;
+                if (isMouseover) {
+                    const entity = mc_level.getRuntimeEntity(pkt.actorId, false);
+                    if (entity?.isPlayer() && interactor) {
+                        if (interactor.getPermissionLevel() >= this.leastPerm) this.taggingFunc.call(interactor, "§f" + this.getOSName(entity));
+                    }
+                }
+            });
+        } catch {
+            this.evRegistered = true;
+        }
     }
 }
+new OSTag();
