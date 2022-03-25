@@ -47,7 +47,7 @@ try {
 
 events.serverOpen.on(() => {
     if (config.enabled !== false) {
-        import("./scoretag");
+        import("./src/scoretag");
         console.log(white("[OSTAG] loaded successfullly"));
     } else console.log(white("[OSTAG]"), red("not enabled"));
 });
