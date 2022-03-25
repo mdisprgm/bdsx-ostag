@@ -1,7 +1,7 @@
 import { NetworkIdentifier } from "bdsx/bds/networkidentifier";
 import { MinecraftPacketIds } from "bdsx/bds/packetids";
 import { InteractPacket } from "bdsx/bds/packets";
-import { Player, ServerPlayer } from "bdsx/bds/player";
+import { Player, PlayerPermission, ServerPlayer } from "bdsx/bds/player";
 import { serverInstance } from "bdsx/bds/server";
 import { BuildPlatform } from "bdsx/common";
 import { events } from "bdsx/event";
@@ -24,6 +24,9 @@ function getOSName(player: Player) {
     const ni = player.getNetworkIdentifier();
     return (config as any)[BuildPlatform[OSs.get(ni)!]] ?? config.UNKNOWN ?? "";
 }
+
+const cfgPerm = PlayerPermission[config.tags.permission as any] as unknown as number;
+const leastPerm = [PlayerPermission.CUSTOM, undefined, null].includes(cfgPerm) ? PlayerPermission.VISITOR : cfgPerm;
 
 let taggingFunc: (message: string, params?: string[]) => void = (msg: string) => {};
 events.playerJoin.on((ev) => {
@@ -63,7 +66,7 @@ function registerInteractEv() {
             if (isMouseover) {
                 const entity = mc_level.getRuntimeEntity(pkt.actorId, false);
                 if (entity?.isPlayer() && interactor) {
-                    taggingFunc.call(interactor, "§f" + getOSName(entity));
+                    if (interactor.getPermissionLevel() >= leastPerm) taggingFunc.call(interactor, "§f" + getOSName(entity));
                 }
             }
         });
