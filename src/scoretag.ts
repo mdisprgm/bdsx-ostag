@@ -38,7 +38,9 @@ class OSTag {
     private event(): void {
         events.playerJoin.on((ev) => {
             const os = this.getOSName(ev.player);
-            if (this.config.tags?.position !== "ScoreTag") this.registerInteractEv();
+            const position = this.config.tags?.position;
+            if (position == null || position === "ScoreTag") ev.player.setScoreTag(os);
+            else if (this.config.tags?.position !== "ScoreTag") this.registerInteractEv();
             else ev.player.setScoreTag(os);
         });
     }
