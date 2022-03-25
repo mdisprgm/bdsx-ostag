@@ -29,7 +29,7 @@ class OSTag {
         const ni = player.getNetworkIdentifier();
         return (this.config as any)[BuildPlatform[OSs.get(ni)!]] ?? this.config.UNKNOWN ?? "";
     }
-    private taggingFunc: (message: string, params?: string[]) => void = (msg: string) => {};
+    private tagger: (message: string, params?: string[]) => void = (msg: string) => {};
 
     private readonly config = getConfig();
     private readonly cfgPerm = PlayerPermission[this.config.tags.permission as any] as unknown as number;
@@ -48,19 +48,19 @@ class OSTag {
         try {
             switch (this.config.tags.position) {
                 case "Raw":
-                    this.taggingFunc = ServerPlayer.prototype.sendMessage;
+                    this.tagger = ServerPlayer.prototype.sendMessage;
                     break;
                 case "Popup":
-                    this.taggingFunc = ServerPlayer.prototype.sendPopup;
+                    this.tagger = ServerPlayer.prototype.sendPopup;
                     break;
                 case "JukeboxPopup":
-                    this.taggingFunc = ServerPlayer.prototype.sendJukeboxPopup;
+                    this.tagger = ServerPlayer.prototype.sendJukeboxPopup;
                     break;
                 case "Tip":
-                    this.taggingFunc = ServerPlayer.prototype.sendTip;
+                    this.tagger = ServerPlayer.prototype.sendTip;
                     break;
                 case "ActionBar":
-                    this.taggingFunc = ServerPlayer.prototype.sendActionbar;
+                    this.tagger = ServerPlayer.prototype.sendActionbar;
                     break;
                 default:
                     break;
@@ -72,7 +72,7 @@ class OSTag {
                 if (isMouseover) {
                     const entity = mc_level.getRuntimeEntity(pkt.actorId, false);
                     if (entity?.isPlayer() && interactor) {
-                        if (interactor.getPermissionLevel() >= this.leastPerm) this.taggingFunc.call(interactor, "§f" + this.getOSName(entity));
+                        if (interactor.getPermissionLevel() >= this.leastPerm) this.tagger.call(interactor, "§f" + this.getOSName(entity));
                     }
                 }
             });
