@@ -32,13 +32,13 @@ class OSTag {
     private tagger: (message: string, params?: string[]) => void = (msg: string) => {};
 
     private readonly config = getConfig();
-    private readonly cfgPerm = PlayerPermission[this.config.tags.permission as any] as unknown as number;
+    private readonly cfgPerm = PlayerPermission[this.config.tags?.permission as any] as unknown as number;
     private readonly leastPerm = [PlayerPermission.CUSTOM, undefined, null].includes(this.cfgPerm) ? PlayerPermission.VISITOR : this.cfgPerm;
 
     private event(): void {
         events.playerJoin.on((ev) => {
             const os = this.getOSName(ev.player);
-            if (this.config.tags.position !== "ScoreTag") this.registerInteractEv();
+            if (this.config.tags?.position !== "ScoreTag") this.registerInteractEv();
             else ev.player.setScoreTag(os);
         });
     }
@@ -46,7 +46,7 @@ class OSTag {
     private registerInteractEv() {
         if (this.evRegistered) return;
         try {
-            switch (this.config.tags.position) {
+            switch (this.config.tags?.position) {
                 case "Raw":
                     this.tagger = ServerPlayer.prototype.sendMessage;
                     break;
