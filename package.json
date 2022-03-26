@@ -1,6 +1,6 @@
 {
     "name": "@bdsx/ostag",
-    "version": "1.3.2",
+    "version": "1.3.3",
     "description": "Displays Device OS's name",
     "main": "index.js",
     "scripts": {

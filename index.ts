@@ -6,7 +6,7 @@ import * as path from "path";
 
 const defaultConfig = {
     tags: {
-        position: "Tip",
+        position: "ScoreTag",
         permission: "MEMBER", // unavailable with position: ScoreTag
         enabled: true,
     },
