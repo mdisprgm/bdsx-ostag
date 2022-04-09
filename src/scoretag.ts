@@ -2,9 +2,9 @@ import { NetworkIdentifier } from "bdsx/bds/networkidentifier";
 import { MinecraftPacketIds } from "bdsx/bds/packetids";
 import { InteractPacket } from "bdsx/bds/packets";
 import { Player, PlayerPermission, ServerPlayer } from "bdsx/bds/player";
-import { serverInstance } from "bdsx/bds/server";
 import { BuildPlatform } from "bdsx/common";
 import { events } from "bdsx/event";
+import { bedrockServer } from "bdsx/launcher";
 import { getConfig } from "..";
 
 const OSs = new Map<NetworkIdentifier, BuildPlatform>();
@@ -19,7 +19,7 @@ events.networkDisconnected.on((ni) => {
     OSs.delete(ni);
 });
 
-const mc_level = serverInstance.minecraft.getLevel();
+const mc_level = bedrockServer.level;
 
 class OSTag {
     constructor() {
