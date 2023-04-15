@@ -51,3 +51,7 @@ Available keywords for `permission`:
 
 -   Update .gitignore & .npmignore
 -   Add custom tags
+
+# TODO
+
+-   Show input mode
